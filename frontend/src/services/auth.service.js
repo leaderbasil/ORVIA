@@ -10,19 +10,16 @@ export async function login({ email, password }) {
     password === demoCredentials.password
   ) {
     return {
-      data: {
-        access_token: DEMO_TOKEN,
-        token_type: 'bearer',
-        expires_in: 1800,
-        user: {
-          id: 'demo-admin-id',
-          full_name: 'Demo Admin',
-          email: demoCredentials.email,
-          role: 'ADMIN',
-          is_active: true,
-        },
+      access_token: DEMO_TOKEN,
+      token_type: 'bearer',
+      expires_in: 1800,
+      user: {
+        id: 'demo-admin-id',
+        full_name: 'Demo Admin',
+        email: demoCredentials.email,
+        role: 'ADMIN',
+        is_active: true,
       },
-      message: 'Logged in',
     }
   }
 
@@ -35,14 +32,11 @@ export async function getMe() {
   if (token === DEMO_TOKEN) {
     const demoEmail = demoCredentials?.email || 'admin@example.com'
     return {
-      data: {
-        id: 'demo-admin-id',
-        full_name: 'Demo Admin',
-        email: demoEmail,
-        role: 'ADMIN',
-        is_active: true,
-      },
-      message: 'OK',
+      id: 'demo-admin-id',
+      full_name: 'Demo Admin',
+      email: demoEmail,
+      role: 'ADMIN',
+      is_active: true,
     }
   }
 
