@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Chart colors derive from tailwind.config.js tokens. */
+    --chart-primary: theme('colors.primary.strong');
+    --chart-grid: theme('colors.border');
+    --chart-axis: theme('colors.text.muted');
+  }
+
+  body {
+    @apply bg-background text-text antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  ::selection {
+    @apply bg-primary-soft text-primary-strong;
+  }
+}
+
+@layer utilities {
+  .numeric {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .orvia-blob {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .orvia-blob-one {
+    top: -10rem;
+    inset-inline-start: -8rem;
+    width: 30rem;
+    height: 30rem;
+    background: radial-gradient(
+      circle at center,
+      rgba(167, 139, 250, 0.28) 0%,
+      rgba(167, 139, 250, 0) 68%
+    );
+    animation: orvia-float 18s ease-in-out infinite alternate;
+  }
+
+  .orvia-blob-two {
+    bottom: -12rem;
+    inset-inline-end: -10rem;
+    width: 34rem;
+    height: 34rem;
+    background: radial-gradient(
+      circle at center,
+      rgba(99, 102, 241, 0.22) 0%,
+      rgba(99, 102, 241, 0) 70%
+    );
+    animation: orvia-float 24s ease-in-out infinite alternate;
+    animation-delay: -7s;
+  }
+
+  .orvia-blob-three {
+    top: 18%;
+    inset-inline-start: 38%;
+    width: 24rem;
+    height: 24rem;
+    background: radial-gradient(
+      circle at center,
+      rgba(196, 181, 253, 0.22) 0%,
+      rgba(196, 181, 253, 0) 70%
+    );
+    animation: orvia-drift 30s ease-in-out infinite alternate;
+    animation-delay: -11s;
+  }
+
+  .orvia-rise {
+    animation: orvia-rise 0.55s ease-out both;
+  }
+}
+
+@keyframes orvia-float {
+  from {
+    transform: translate3d(-1rem, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2.5rem, 2rem, 0) scale(1.08);
+  }
+}
+
+@keyframes orvia-drift {
+  from {
+    transform: translate3d(1.5rem, 0, 0) scale(1.05);
+  }
+  to {
+    transform: translate3d(-2rem, -1.5rem, 0) scale(0.98);
+  }
+}
+
+@keyframes orvia-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .orvia-blob-one,
+  .orvia-blob-two,
+  .orvia-blob-three,
+  .orvia-rise {
+    animation: none !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .print-area {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  @page {
+    margin: 12mm;
+  }
+}

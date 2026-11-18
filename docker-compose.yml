@@ -1,0 +1,72 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mini_grocery_pos
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mini_grocery_pos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      APP_ENV: development
+      APP_NAME: Mini Grocery POS
+      API_V1_PREFIX: /api/v1
+      DATABASE_URL: postgresql+psycopg://postgres:password@db:5432/mini_grocery_pos
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dev-only-secret-change-me-0123456789abcdef}
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      FRONTEND_ORIGIN: http://localhost:5173
+      TAX_RATE: "0.00"
+      CURRENCY_CODE: USD
+      REPORT_TIMEZONE: UTC
+      FIRST_ADMIN_EMAIL: admin@example.com
+      FIRST_ADMIN_PASSWORD: change-me-now
+      FIRST_ADMIN_FULL_NAME: Store Admin
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "alembic upgrade head &&
+             python -m app.db.init_db &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  frontend:
+    build: ./frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000/api/v1
+      VITE_CURRENCY_CODE: USD
+      # Showcase-only one-click demo login; disabled unless explicitly enabled.
+      VITE_DEMO_LOGIN_ENABLED: ${VITE_DEMO_LOGIN_ENABLED:-false}
+      VITE_DEMO_ADMIN_EMAIL: ${VITE_DEMO_ADMIN_EMAIL:-admin@example.com}
+      VITE_DEMO_ADMIN_PASSWORD: ${VITE_DEMO_ADMIN_PASSWORD:-change-me-now}
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  db_data:
