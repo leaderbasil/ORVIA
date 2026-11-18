@@ -149,8 +149,6 @@ export default function SalesHistory() {
   return (
     <div>
       <PageHeader
-        title={messages.pages.sales.title}
-        description={messages.pages.sales.description}
         actions={
           <Button onClick={() => navigate('/pos')}>
             <Plus className="h-4 w-4" aria-hidden="true" />

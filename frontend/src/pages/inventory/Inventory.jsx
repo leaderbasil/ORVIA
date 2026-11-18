@@ -97,8 +97,6 @@ export default function Inventory() {
   return (
     <div>
       <PageHeader
-        title={messages.pages.inventory.title}
-        description={messages.pages.inventory.description}
         actions={
           pageData ? (
             <Badge tone={pageData.total > 0 ? 'warning' : 'success'}>

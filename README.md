@@ -4,11 +4,9 @@
   <img src="frontend/public/orvia-icon-180.png" alt="ORVIA" width="120" />
 </p>
 
-ORVIA هو نظام مبسّط لنقطة بيع (POS) وإدارة مخزون متجر بقالة واحد: منتجات وأسعار
-وكميات، بحث سريع أثناء البيع، فواتير متعددة العناصر بإجماليات تُحسب في
-الخادم، خصم تلقائي للمخزون داخل معاملة واحدة، سجل مبيعات، تقارير أساسية،
-وصلاحيات مدير/كاشير. الواجهة عربية بالكامل (RTL)، والكود والتعليقات
-بالإنجليزية.
+ORVIA is a lightweight Point of Sale and Inventory Management System designed for a single grocery store. It provides product, pricing, and stock quantity management, fast product search during checkout, multi-item invoices with totals calculated on the server, and automatic inventory deduction within a single database transaction.
+
+The system also includes sales history, basic reports, and role-based access control for Administrators and Cashiers.
 
 Monorepo with two independent apps. The specification in the project brief is
 the single source of truth; this repository implements it phase by phase.

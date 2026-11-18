@@ -4,7 +4,6 @@ import { ReceiptText } from 'lucide-react'
 import { toast } from 'sonner'
 
 import Button from '../../components/common/Button.jsx'
-import PageHeader from '../../components/common/PageHeader.jsx'
 import CartPanel from '../../components/pos/CartPanel.jsx'
 import ProductSearchPanel from '../../components/pos/ProductSearchPanel.jsx'
 import SaleSuccessDialog from '../../components/pos/SaleSuccessDialog.jsx'
@@ -119,20 +118,15 @@ export default function POS() {
 
   return (
     <div>
-      <PageHeader
-        title={messages.pages.pos.title}
-        description={messages.pages.pos.description}
-        actions={
-          <Button variant="secondary" onClick={() => navigate('/sales')}>
-            <ReceiptText className="h-4 w-4" aria-hidden="true" />
-            {messages.nav.sales}
-          </Button>
-        }
-      />
-
       <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
         <ProductSearchPanel cart={cart} onAdd={handleAdd} />
         <CartPanel
+          headerAction={
+            <Button variant="secondary" size="sm" onClick={() => navigate('/sales')}>
+              <ReceiptText className="h-4 w-4" aria-hidden="true" />
+              {messages.nav.sales}
+            </Button>
+          }
           cart={cart}
           subtotalCents={subtotalCents}
           discount={discount}

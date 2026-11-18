@@ -28,7 +28,7 @@ export default function AppLayout() {
           onLogout={handleLogout}
           onOpenSidebar={() => setSidebarOpen(true)}
         />
-        <main className="mx-auto w-full max-w-[1280px] flex-1 p-4 md:p-6 lg:p-8">
+        <main className="mx-auto w-full max-w-screen-2xl flex-1 p-4 md:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

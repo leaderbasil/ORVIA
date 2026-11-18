@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Bell, LogOut, Menu } from 'lucide-react'
 
-import { OrviaMark } from '../brand/OrviaLogo'
-import { APP_NAME, messages } from '../../constants/messages'
+import { messages } from '../../constants/messages'
 import { cn } from '../../utils/cn'
+import { pageMetaForPath } from '../../utils/navigation'
 
 function getInitials(fullName = '') {
   return fullName
@@ -15,27 +15,27 @@ function getInitials(fullName = '') {
 }
 
 export default function Header({ user = null, role = 'ADMIN', onLogout, onOpenSidebar }) {
+  const { pathname } = useLocation()
+  const page = pageMetaForPath(pathname)
+
   return (
     <header className="no-print sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-border bg-surface/95 px-4 backdrop-blur md:px-6">
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         <button
           type="button"
           onClick={onOpenSidebar}
           aria-label={messages.aria.openMenu}
-          className="flex h-10 w-10 items-center justify-center rounded-md text-text-muted hover:bg-background hover:text-text md:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-text-muted hover:bg-background hover:text-text md:hidden"
         >
           <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
-        <div className="flex items-center gap-3 md:hidden">
-          <OrviaMark className="h-9 w-9 rounded-lg" />
-          <div>
-            <p className="text-sm font-semibold tracking-[0.08em]">{APP_NAME}</p>
-            <p className="hidden text-xs text-text-muted sm:block">{messages.app.tagline}</p>
-          </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-text sm:text-base">{page.title}</p>
+          <p className="hidden truncate text-xs text-text-muted sm:block">{page.description}</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         {role === 'ADMIN' ? (
           <Link
             to="/inventory"

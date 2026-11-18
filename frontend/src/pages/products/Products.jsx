@@ -187,8 +187,6 @@ export default function Products() {
   return (
     <div>
       <PageHeader
-        title={messages.pages.products.title}
-        description={messages.pages.products.description}
         actions={
           isAdmin ? (
             <Button onClick={() => navigate('/products/new')}>

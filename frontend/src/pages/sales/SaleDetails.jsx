@@ -101,8 +101,6 @@ export default function SaleDetails() {
 
       <PageHeader
         className="no-print"
-        title={`${messages.sales.detailTitle} ${sale.invoice_number}`}
-        description={`${messages.sales.issuedAt}: ${formatDateTime(sale.created_at)}`}
         actions={
           <>
             <Button variant="secondary" onClick={() => navigate('/sales')}>

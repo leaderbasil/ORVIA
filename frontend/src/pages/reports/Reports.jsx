@@ -6,7 +6,6 @@ import Button from '../../components/common/Button.jsx'
 import Card from '../../components/common/Card.jsx'
 import DataTable from '../../components/common/DataTable.jsx'
 import Input from '../../components/common/Input.jsx'
-import PageHeader from '../../components/common/PageHeader.jsx'
 import Select from '../../components/common/Select.jsx'
 import Spinner from '../../components/common/Spinner.jsx'
 import SalesChart from '../../components/reports/SalesChart.jsx'
@@ -165,10 +164,6 @@ export default function Reports() {
 
   return (
     <div className="space-y-5">
-      <PageHeader
-        title={messages.pages.reports.title}
-        description={messages.pages.reports.description}
-      />
 
       <Card>
         <div className="border-b border-border p-4">

@@ -6,7 +6,6 @@ import Alert from '../../components/common/Alert.jsx'
 import Breadcrumbs from '../../components/common/Breadcrumbs.jsx'
 import Button from '../../components/common/Button.jsx'
 import Card from '../../components/common/Card.jsx'
-import PageHeader from '../../components/common/PageHeader.jsx'
 import Spinner from '../../components/common/Spinner.jsx'
 import ProductForm from '../../components/products/ProductForm.jsx'
 import { messages } from '../../constants/messages.js'
@@ -71,10 +70,6 @@ export default function EditProduct() {
   return (
     <div>
       {breadcrumbs}
-      <PageHeader
-        title={messages.pages.productEdit.title}
-        description={product.name}
-      />
       <Card className="p-4 md:p-6">
         <ProductForm
           initialValues={product}

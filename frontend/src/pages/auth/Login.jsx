@@ -86,7 +86,7 @@ export default function Login() {
 
       <Card className="orvia-rise relative w-full max-w-md p-6 shadow-md sm:p-8">
         <div className="mb-6 flex flex-col items-center gap-4 text-center">
-          <OrviaLogo className="h-44 w-44" />
+          <OrviaLogo />
           <div className="space-y-1">
             <h1 className="text-2xl font-semibold">{messages.pages.login.title}</h1>
             <p className="text-sm text-text-muted">{messages.pages.login.description}</p>

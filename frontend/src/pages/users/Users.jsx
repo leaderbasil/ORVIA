@@ -206,8 +206,6 @@ export default function Users() {
   return (
     <div>
       <PageHeader
-        title={messages.pages.users.title}
-        description={messages.pages.users.description}
         actions={
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" aria-hidden="true" />

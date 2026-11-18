@@ -45,10 +45,6 @@ export default function Dashboard() {
   if (dashboardQuery.isError) {
     return (
       <div>
-        <PageHeader
-          title={messages.pages.dashboard.title}
-          description={messages.pages.dashboard.description}
-        />
         <Alert
           tone="danger"
           title={messages.dashboard.errorTitle}
@@ -71,8 +67,6 @@ export default function Dashboard() {
   return (
     <div className="space-y-5">
       <PageHeader
-        title={messages.pages.dashboard.title}
-        description={messages.pages.dashboard.description}
         actions={
           <Button variant="secondary" onClick={() => navigate('/reports')}>
             <BarChart3 className="h-4 w-4" aria-hidden="true" />

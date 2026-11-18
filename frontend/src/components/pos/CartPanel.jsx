@@ -65,6 +65,7 @@ function QuantityControl({ item, onChange, onRemove }) {
 }
 
 export default function CartPanel({
+  headerAction,
   cart,
   subtotalCents,
   discount,
@@ -98,11 +99,14 @@ export default function CartPanel({
             </p>
           </div>
         </div>
-        {cart.length > 0 ? (
-          <Button variant="ghost" size="sm" onClick={onClear} disabled={isSubmitting}>
-            {messages.pos.clearCart}
-          </Button>
-        ) : null}
+        <div className="flex shrink-0 items-center gap-2">
+          {headerAction}
+          {cart.length > 0 ? (
+            <Button variant="ghost" size="sm" onClick={onClear} disabled={isSubmitting}>
+              {messages.pos.clearCart}
+            </Button>
+          ) : null}
+        </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
@@ -147,37 +151,32 @@ export default function CartPanel({
       <div className="shrink-0 space-y-3 border-t border-border p-4">
         {serverError ? <Alert tone="danger">{serverError}</Alert> : null}
 
-        <div className="flex items-center justify-between gap-3">
-          <p className="shrink-0 text-sm font-medium text-text">
-            {messages.pos.paymentMethod}
-          </p>
-          <div
-            role="radiogroup"
-            aria-label={messages.pos.paymentMethod}
-            className="grid flex-1 grid-cols-2 gap-2"
-          >
-            {PAYMENT_METHODS.map((method) => {
-              const selected = paymentMethod === method
-              return (
-                <button
-                  key={method}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => onPaymentChange(method)}
-                  disabled={isSubmitting}
-                  className={cn(
-                    'h-9 rounded-md border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50',
-                    selected
-                      ? 'border-primary-strong bg-primary-soft text-primary-strong'
-                      : 'border-border bg-surface text-text-muted hover:bg-background hover:text-text',
-                  )}
-                >
-                  {messages.pos.payment[method]}
-                </button>
-              )
-            })}
-          </div>
+        <div
+          role="radiogroup"
+          aria-label={messages.pos.paymentMethod}
+          className="grid grid-cols-2 gap-2"
+        >
+          {PAYMENT_METHODS.map((method) => {
+            const selected = paymentMethod === method
+            return (
+              <button
+                key={method}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => onPaymentChange(method)}
+                disabled={isSubmitting}
+                className={cn(
+                  'h-9 rounded-md border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+                  selected
+                    ? 'border-primary-strong bg-primary-soft text-primary-strong'
+                    : 'border-border bg-surface text-text-muted hover:bg-background hover:text-text',
+                )}
+              >
+                {messages.pos.payment[method]}
+              </button>
+            )
+          })}
         </div>
 
         <Input
