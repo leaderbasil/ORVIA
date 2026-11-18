@@ -26,10 +26,12 @@ export default function Header({ user = null, role = 'ADMIN', onLogout, onOpenSi
         >
           <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
-        <OrviaMark className="h-9 w-9 rounded-lg" />
-        <div>
-          <p className="text-sm font-semibold tracking-[0.08em]">{APP_NAME}</p>
-          <p className="hidden text-xs text-text-muted sm:block">{messages.app.tagline}</p>
+        <div className="flex items-center gap-3 md:hidden">
+          <OrviaMark className="h-9 w-9 rounded-lg" />
+          <div>
+            <p className="text-sm font-semibold tracking-[0.08em]">{APP_NAME}</p>
+            <p className="hidden text-xs text-text-muted sm:block">{messages.app.tagline}</p>
+          </div>
         </div>
       </div>
 
