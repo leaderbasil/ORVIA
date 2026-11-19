@@ -59,10 +59,11 @@ services:
     environment:
       VITE_API_BASE_URL: http://localhost:8000/api/v1
       VITE_CURRENCY_CODE: USD
-      # Showcase-only one-click demo login; disabled unless explicitly enabled.
+      # Frontend-only demo login. Disabled by default in the full-stack setup;
+      # set VITE_DEMO_LOGIN_ENABLED=true for a browser-only showcase.
       VITE_DEMO_LOGIN_ENABLED: ${VITE_DEMO_LOGIN_ENABLED:-false}
-      VITE_DEMO_ADMIN_EMAIL: ${VITE_DEMO_ADMIN_EMAIL:-admin@example.com}
-      VITE_DEMO_ADMIN_PASSWORD: ${VITE_DEMO_ADMIN_PASSWORD:-change-me-now}
+      VITE_DEMO_ADMIN_EMAIL: ${VITE_DEMO_ADMIN_EMAIL:-demo@orvia.local}
+      VITE_DEMO_ADMIN_PASSWORD: ${VITE_DEMO_ADMIN_PASSWORD:-orvia-demo}
     depends_on:
       - backend
     ports:

@@ -122,26 +122,28 @@ exists.
 
 ### Showcase demo login
 
-The login page can show a one-click **الدخول بالنسخة التجريبية** button. It is
-hidden by default and appears only when all three variables are set in
-`frontend/.env`:
+The login page shows a one-click **الدخول بالنسخة التجريبية** button by default.
+The demo is completely frontend-only: it uses realistic products, invoices and
+users stored in the browser (`localStorage`) and a demo session token, so it
+works on Netlify or any static host without FastAPI or PostgreSQL.
+
+The fallback account is:
 
 ```env
 VITE_DEMO_LOGIN_ENABLED=true
-VITE_DEMO_ADMIN_EMAIL=admin@example.com
-VITE_DEMO_ADMIN_PASSWORD=change-me-now
+VITE_DEMO_ADMIN_EMAIL=demo@orvia.local
+VITE_DEMO_ADMIN_PASSWORD=orvia-demo
 ```
 
-The button calls the normal `/auth/login` endpoint with those credentials; there
-is no backend bypass. Vite compiles these values into the public bundle, so this
-is for local showcases only. Use a dedicated demo account and keep
-`VITE_DEMO_LOGIN_ENABLED=false` in production.
+Both values can be overridden in `frontend/.env`; the button uses them but never
+calls `/auth/login`. Because the demo is local, these are not production
+credentials. Set `VITE_DEMO_LOGIN_ENABLED=false` to hide the button when the
+frontend is connected to a real backend.
 
-For Docker Compose, enable it at startup instead:
-
-```bash
-VITE_DEMO_LOGIN_ENABLED=true docker compose up --build
-```
+Demo state is versioned (`orvia.demo.v2.*`) so stale data from older demo builds
+is ignored. To start from the seeded products and invoices again, clear the site's
+local storage in the browser. The demo supports the full flow: dashboard,
+products, inventory, POS checkout, sales history/details, reports and users.
 
 ## Tests
 

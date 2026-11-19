@@ -1,35 +1,166 @@
+import { fromCents, toCents } from '../utils/money.js'
 import { api, unwrap } from './api'
-import { getStoredDemoSales, getStoredDemoProducts } from './mockDemoData.js'
+import {
+  enumerateDateKeys,
+  enumerateMonthKeys,
+  isDemoMode,
+  localDateKey,
+  resolveDemoRange,
+} from './demoMode.js'
+import { getStoredDemoProducts, getStoredDemoSales } from './mockDemoData.js'
 
-const DEMO_TOKEN = 'demo-mock-access-token-orvia'
-const isDemoMode = () => sessionStorage.getItem('pos.access_token') === DEMO_TOKEN
+const DEFAULT_REPORT_DAYS = 30
+const LOW_STOCK_ITEM_LIMIT = 50
+
+function safeCents(value) {
+  try {
+    return toCents(value)
+  } catch {
+    return 0
+  }
+}
+
+function completedSalesInRange(sales, from, to) {
+  return sales.filter((sale) => {
+    if (sale.status !== 'COMPLETED') return false
+    const key = localDateKey(sale.created_at)
+    return key >= from && key <= to
+  })
+}
+
+function summarizeSales(sales) {
+  const salesTotalCents = sales.reduce(
+    (total, sale) => total + safeCents(sale.total_amount),
+    0,
+  )
+  const discountCents = sales.reduce(
+    (total, sale) => total + safeCents(sale.discount_amount),
+    0,
+  )
+  const invoiceCount = sales.length
+
+  return {
+    sales_total: fromCents(salesTotalCents),
+    invoice_count: invoiceCount,
+    average_invoice: fromCents(
+      invoiceCount ? Math.round(salesTotalCents / invoiceCount) : 0,
+    ),
+    total_discount: fromCents(discountCents),
+  }
+}
+
+function grossProfit(sales) {
+  let profitCents = 0
+  for (const sale of sales) {
+    for (const item of sale.items ?? []) {
+      profitCents +=
+        (safeCents(item.unit_price) - safeCents(item.unit_cost)) *
+        Number(item.quantity ?? 0)
+    }
+  }
+  return fromCents(profitCents)
+}
+
+function topProducts(sales, limit) {
+  const grouped = new Map()
+
+  for (const sale of sales) {
+    for (const item of sale.items ?? []) {
+      const key = item.product_id || item.sku || item.product_name
+      const entry = grouped.get(key) ?? {
+        product_id: item.product_id ?? key,
+        product_name: item.product_name ?? '',
+        sku: item.sku ?? '',
+        quantity_sold: 0,
+        revenue_cents: 0,
+      }
+      entry.quantity_sold += Number(item.quantity ?? 0)
+      entry.revenue_cents += safeCents(item.line_total)
+      grouped.set(key, entry)
+    }
+  }
+
+  return [...grouped.values()]
+    .sort(
+      (a, b) =>
+        b.quantity_sold - a.quantity_sold ||
+        b.revenue_cents - a.revenue_cents ||
+        a.product_name.localeCompare(b.product_name, 'ar'),
+    )
+    .slice(0, limit)
+    .map(({ revenue_cents: revenueCents, ...entry }) => ({
+      ...entry,
+      revenue: fromCents(revenueCents),
+    }))
+}
+
+function buildSeries(sales, from, to, groupBy) {
+  const keys =
+    groupBy === 'month'
+      ? enumerateMonthKeys(from, to)
+      : enumerateDateKeys(from, to)
+  const values = new Map()
+
+  for (const sale of sales) {
+    const dateKey = localDateKey(sale.created_at)
+    const period = groupBy === 'month' ? dateKey.slice(0, 7) : dateKey
+    const entry = values.get(period) ?? { cents: 0, count: 0 }
+    entry.cents += safeCents(sale.total_amount)
+    entry.count += 1
+    values.set(period, entry)
+  }
+
+  return keys.map((period) => {
+    const entry = values.get(period) ?? { cents: 0, count: 0 }
+    return {
+      period,
+      sales_total: fromCents(entry.cents),
+      invoice_count: entry.count,
+    }
+  })
+}
 
 export async function getDashboard() {
   if (isDemoMode()) {
-    const sales = getStoredDemoSales().filter(s => s.status === 'COMPLETED')
+    const today = localDateKey()
+    const period = resolveDemoRange(undefined, today, DEFAULT_REPORT_DAYS)
+    const sales = getStoredDemoSales()
     const products = getStoredDemoProducts()
-    const totalRevenue = sales.reduce((acc, s) => acc + parseFloat(s.grand_total || 0), 0)
-    const lowStockCount = products.filter(p => p.stock_quantity <= p.minimum_stock).length
 
-    // Generate 30 daily series points
-    const series = Array.from({ length: 30 }, (_, i) => {
-      const d = new Date()
-      d.setDate(d.getDate() - (29 - i))
-      return {
-        date: d.toISOString().split('T')[0],
-        sales_count: i === 29 ? sales.length : (i % 3 === 0 ? 2 : 0),
-        revenue: i === 29 ? totalRevenue : (i % 3 === 0 ? 19.50 : 0),
-      }
-    })
+    const todaySales = completedSalesInRange(sales, today, today)
+    const periodSales = completedSalesInRange(
+      sales,
+      period.from,
+      period.to,
+    )
+    const todaySummary = summarizeSales(todaySales)
+    const periodSummary = summarizeSales(periodSales)
 
     return {
-      summary: {
-        total_revenue: totalRevenue.toFixed(2),
-        total_sales_count: sales.length,
-        low_stock_count: lowStockCount,
-        active_products_count: products.filter(p => p.is_active).length,
+      today: {
+        sales_total: todaySummary.sales_total,
+        invoice_count: todaySummary.invoice_count,
       },
-      daily_series: series,
+      period: {
+        from: period.from,
+        to: period.to,
+        sales_total: periodSummary.sales_total,
+        invoice_count: periodSummary.invoice_count,
+        average_invoice: periodSummary.average_invoice,
+        gross_profit: grossProfit(periodSales),
+      },
+      low_stock_count: products.filter(
+        (product) =>
+          product.is_active &&
+          Number(product.stock_quantity) <= Number(product.minimum_stock),
+      ).length,
+      top_products: topProducts(periodSales, 5),
+      daily_sales: buildSeries(
+        periodSales,
+        period.from,
+        period.to,
+        'day',
+      ),
     }
   }
 
@@ -39,12 +170,20 @@ export async function getDashboard() {
 
 export async function getSalesReport(params = {}) {
   if (isDemoMode()) {
-    const sales = getStoredDemoSales().filter(s => s.status === 'COMPLETED')
-    const totalRevenue = sales.reduce((acc, s) => acc + parseFloat(s.grand_total || 0), 0)
+    const range = resolveDemoRange(params.from, params.to)
+    const groupBy = params.group_by === 'month' ? 'month' : 'day'
+    const sales = completedSalesInRange(
+      getStoredDemoSales(),
+      range.from,
+      range.to,
+    )
+
     return {
-      total_sales: sales.length,
-      total_revenue: totalRevenue.toFixed(2),
-      items: sales,
+      from: range.from,
+      to: range.to,
+      group_by: groupBy,
+      summary: summarizeSales(sales),
+      series: buildSeries(sales, range.from, range.to, groupBy),
     }
   }
 
@@ -54,14 +193,15 @@ export async function getSalesReport(params = {}) {
 
 export async function getTopProducts(params = {}) {
   if (isDemoMode()) {
-    const products = getStoredDemoProducts()
-    return products.slice(0, 5).map(p => ({
-      product_id: p.id,
-      product_name: p.name,
-      sku: p.sku,
-      total_quantity_sold: Math.floor(Math.random() * 20) + 5,
-      total_revenue: (parseFloat(p.selling_price) * 10).toFixed(2),
-    }))
+    const range = resolveDemoRange(params.from, params.to)
+    const requestedLimit = Number.parseInt(params.limit, 10) || 10
+    const limit = Math.min(50, Math.max(1, requestedLimit))
+    const sales = completedSalesInRange(
+      getStoredDemoSales(),
+      range.from,
+      range.to,
+    )
+    return topProducts(sales, limit)
   }
 
   const response = await api.get('/reports/top-products', { params })
@@ -71,12 +211,49 @@ export async function getTopProducts(params = {}) {
 export async function getInventoryReport() {
   if (isDemoMode()) {
     const products = getStoredDemoProducts()
-    const totalValue = products.reduce((acc, p) => acc + (p.stock_quantity * parseFloat(p.cost_price || 0)), 0)
+    const activeProducts = products.filter((product) => product.is_active)
+
+    const lowStockProducts = activeProducts
+      .filter(
+        (product) =>
+          Number(product.stock_quantity) <= Number(product.minimum_stock),
+      )
+      .sort(
+        (a, b) =>
+          Number(a.stock_quantity) - Number(b.stock_quantity) ||
+          a.name.localeCompare(b.name, 'ar'),
+      )
+      .slice(0, LOW_STOCK_ITEM_LIMIT)
+
+    const stockValueCents = activeProducts.reduce(
+      (total, product) =>
+        total +
+        safeCents(product.cost_price) * Number(product.stock_quantity ?? 0),
+      0,
+    )
+
     return {
-      total_items_count: products.length,
-      total_stock_units: products.reduce((acc, p) => acc + p.stock_quantity, 0),
-      total_inventory_cost_value: totalValue.toFixed(2),
-      items: products,
+      total_products: products.length,
+      active_products: activeProducts.length,
+      out_of_stock: activeProducts.filter(
+        (product) => Number(product.stock_quantity) === 0,
+      ).length,
+      low_stock: activeProducts.filter(
+        (product) =>
+          Number(product.stock_quantity) <= Number(product.minimum_stock),
+      ).length,
+      stock_value_at_cost: fromCents(stockValueCents),
+      low_stock_items: lowStockProducts.map((product) => ({
+        product_id: product.id,
+        name: product.name,
+        sku: product.sku,
+        category: product.category ?? null,
+        stock_quantity: Number(product.stock_quantity),
+        minimum_stock: Number(product.minimum_stock),
+        value_at_cost: fromCents(
+          safeCents(product.cost_price) * Number(product.stock_quantity ?? 0),
+        ),
+      })),
     }
   }
 

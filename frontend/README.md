@@ -14,21 +14,25 @@ npm run dev        # http://localhost:5173
 
 Scripts: `dev`, `build`, `preview`, `test`, `test:watch`, `lint`.
 
-## Demo login (showcase only)
+## Demo login (frontend-only)
 
-Set the following in `frontend/.env` to show a one-click demo login button on
-the login page:
+The login page shows a one-click **الدخول بالنسخة التجريبية** button by default.
+The demo needs no FastAPI or PostgreSQL: products, users and invoices are seeded
+into `localStorage` under `orvia.demo.v2.*`, and the demo session uses a local
+token. All pages and actions (dashboard, products, inventory, POS checkout,
+sales, reports and users) run in the browser.
 
 ```env
 VITE_DEMO_LOGIN_ENABLED=true
-VITE_DEMO_ADMIN_EMAIL=admin@example.com
-VITE_DEMO_ADMIN_PASSWORD=change-me-now
+VITE_DEMO_ADMIN_EMAIL=demo@orvia.local
+VITE_DEMO_ADMIN_PASSWORD=orvia-demo
 ```
 
-The button is hidden unless the flag is `true` and both credentials are present.
-It uses the normal login API, so the account must exist in the backend. These
-values are embedded in the client bundle; never enable this for a production
-deployment or with a real admin password.
+The values above are fallbacks. Override them in `frontend/.env` if needed; the
+button never calls the login API. Set `VITE_DEMO_LOGIN_ENABLED=false` when the
+frontend is connected to a real backend so the local demo button stays hidden.
+To start again from the seeded products and invoices, clear the site's local
+storage in the browser.
 
 ## Layout
 

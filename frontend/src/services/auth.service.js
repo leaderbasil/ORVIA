@@ -1,25 +1,22 @@
-import { api, unwrap } from './api'
 import { demoCredentials } from '../constants/demo.js'
-
-const DEMO_TOKEN = 'demo-mock-access-token-orvia'
+import { TOKEN_STORAGE_KEY, api, unwrap } from './api'
+import { DEMO_TOKEN } from './demoMode.js'
+import { ensureDemoAdmin, getDemoAdminUser } from './mockDemoData.js'
 
 export async function login({ email, password }) {
+  const normalizedEmail = String(email ?? '').trim().toLowerCase()
+
   if (
     demoCredentials &&
-    email.trim().toLowerCase() === demoCredentials.email.toLowerCase() &&
+    normalizedEmail === demoCredentials.email.trim().toLowerCase() &&
     password === demoCredentials.password
   ) {
+    const user = ensureDemoAdmin({ email: demoCredentials.email })
     return {
       access_token: DEMO_TOKEN,
       token_type: 'bearer',
       expires_in: 1800,
-      user: {
-        id: 'demo-admin-id',
-        full_name: 'Demo Admin',
-        email: demoCredentials.email,
-        role: 'ADMIN',
-        is_active: true,
-      },
+      user,
     }
   }
 
@@ -28,16 +25,9 @@ export async function login({ email, password }) {
 }
 
 export async function getMe() {
-  const token = sessionStorage.getItem('pos.access_token')
+  const token = sessionStorage.getItem(TOKEN_STORAGE_KEY)
   if (token === DEMO_TOKEN) {
-    const demoEmail = demoCredentials?.email || 'admin@example.com'
-    return {
-      id: 'demo-admin-id',
-      full_name: 'Demo Admin',
-      email: demoEmail,
-      role: 'ADMIN',
-      is_active: true,
-    }
+    return getDemoAdminUser()
   }
 
   const response = await api.get('/auth/me')
