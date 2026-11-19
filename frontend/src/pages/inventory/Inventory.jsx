@@ -94,6 +94,50 @@ export default function Inventory() {
     },
   ]
 
+  const mobileRow = (product) => (
+    <div className="space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-medium text-text">{product.name}</p>
+          <p className="numeric text-xs text-text-muted">{product.sku}</p>
+        </div>
+        <Badge tone={product.stock_quantity === 0 ? 'danger' : 'warning'}>
+          {product.stock_quantity === 0 ? messages.inventory.out : messages.inventory.low}
+        </Badge>
+      </div>
+
+      <dl className="grid grid-cols-2 gap-2 text-sm">
+        <div>
+          <dt className="text-xs text-text-muted">{messages.inventory.columns.stock}</dt>
+          <dd
+            className={
+              product.stock_quantity === 0
+                ? 'numeric font-semibold text-danger-strong'
+                : 'numeric font-medium text-text'
+            }
+          >
+            {product.stock_quantity}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-text-muted">{messages.inventory.columns.minimum}</dt>
+          <dd className="numeric">{product.minimum_stock}</dd>
+        </div>
+      </dl>
+
+      <div className="flex justify-end border-t border-border pt-2">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => navigate(`/products/${product.id}/edit`)}
+        >
+          <Pencil className="h-4 w-4" aria-hidden="true" />
+          {messages.inventory.editStock}
+        </Button>
+      </div>
+    </div>
+  )
+
   return (
     <div>
       <PageHeader
@@ -135,6 +179,7 @@ export default function Inventory() {
           <DataTable
             columns={columns}
             rows={pageData?.items ?? []}
+            mobileRow={mobileRow}
             isLoading={lowStockQuery.isLoading}
             emptyTitle={messages.inventory.emptyTitle}
             emptyDescription={messages.inventory.emptyDescription}

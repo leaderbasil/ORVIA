@@ -14,6 +14,16 @@ function SkeletonRows({ columns, rows }) {
   ))
 }
 
+function MobileSkeleton({ rows }) {
+  return Array.from({ length: rows }).map((_, index) => (
+    <div key={`mobile-skeleton-${index}`} className="space-y-2 p-4">
+      <span className="block h-4 w-2/3 animate-pulse rounded bg-background" />
+      <span className="block h-3 w-1/3 animate-pulse rounded bg-background" />
+      <span className="block h-3 w-1/2 animate-pulse rounded bg-background" />
+    </div>
+  ))
+}
+
 export default function DataTable({
   columns,
   rows = [],
@@ -23,66 +33,94 @@ export default function DataTable({
   emptyTitle = messages.common.empty,
   emptyDescription,
   emptyAction,
+  mobileRow,
   className,
 }) {
   const isEmpty = !isLoading && rows.length === 0
 
-  return (
-    <div className={cn('w-full overflow-x-auto', className)}>
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-border bg-background">
-            {columns.map((column) => (
-              <th
-                key={column.key}
-                scope="col"
-                className={cn(
-                  'h-11 whitespace-nowrap px-3 text-start text-xs font-medium text-text-muted',
-                  column.align === 'end' && 'text-end',
-                )}
-              >
-                {column.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {isLoading ? (
-            <SkeletonRows columns={columns} rows={loadingRows} />
-          ) : (
-            rows.map((row) => (
-              <tr
-                key={rowKey(row)}
-                className="h-12 border-b border-border transition-colors last:border-0 hover:bg-primary-soft/50"
-              >
-                {columns.map((column) => (
-                  <td
-                    key={column.key}
-                    className={cn(
-                      'whitespace-nowrap px-3 py-2 align-middle',
-                      column.align === 'end' && 'text-end',
-                      column.className,
-                    )}
-                  >
-                    {column.render ? column.render(row) : row[column.key]}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-          {isEmpty ? (
-            <tr>
-              <td colSpan={columns.length}>
-                <EmptyState
-                  title={emptyTitle}
-                  description={emptyDescription}
-                  action={emptyAction}
-                />
-              </td>
+  const table = (
+    <table className="w-full border-collapse text-sm">
+      <thead>
+        <tr className="border-b border-border bg-background">
+          {columns.map((column) => (
+            <th
+              key={column.key}
+              scope="col"
+              className={cn(
+                'h-11 whitespace-nowrap px-3 text-start text-xs font-medium text-text-muted',
+                column.align === 'end' && 'text-end',
+              )}
+            >
+              {column.header}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {isLoading ? (
+          <SkeletonRows columns={columns} rows={loadingRows} />
+        ) : (
+          rows.map((row) => (
+            <tr
+              key={rowKey(row)}
+              className="h-12 border-b border-border transition-colors last:border-0 hover:bg-primary-soft/50"
+            >
+              {columns.map((column) => (
+                <td
+                  key={column.key}
+                  className={cn(
+                    'whitespace-nowrap px-3 py-2 align-middle',
+                    column.align === 'end' && 'text-end',
+                    column.className,
+                  )}
+                >
+                  {column.render ? column.render(row) : row[column.key]}
+                </td>
+              ))}
             </tr>
-          ) : null}
-        </tbody>
-      </table>
-    </div>
+          ))
+        )}
+        {isEmpty ? (
+          <tr>
+            <td colSpan={columns.length}>
+              <EmptyState
+                title={emptyTitle}
+                description={emptyDescription}
+                action={emptyAction}
+              />
+            </td>
+          </tr>
+        ) : null}
+      </tbody>
+    </table>
+  )
+
+  if (!mobileRow) {
+    return <div className={cn('w-full overflow-x-auto', className)}>{table}</div>
+  }
+
+  return (
+    <>
+      <div className={cn('hidden w-full overflow-x-auto md:block', className)}>
+        {table}
+      </div>
+      <div className="divide-y divide-border md:hidden">
+        {isLoading ? (
+          <MobileSkeleton rows={loadingRows} />
+        ) : isEmpty ? (
+          <EmptyState
+            title={emptyTitle}
+            description={emptyDescription}
+            action={emptyAction}
+          />
+        ) : (
+          rows.map((row) => (
+            <div key={rowKey(row)} className="p-4">
+              {mobileRow(row)}
+            </div>
+          ))
+        )}
+      </div>
+    </>
   )
 }

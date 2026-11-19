@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ReceiptText } from 'lucide-react'
+import { ReceiptText, ShoppingCart } from 'lucide-react'
 import { toast } from 'sonner'
 
 import Button from '../../components/common/Button.jsx'
@@ -12,11 +12,13 @@ import { useCreateSale } from '../../hooks/useSales.js'
 import { getApiErrorMessage } from '../../services/api.js'
 import {
   addProductToCart,
+  cartItemCount,
   cartSubtotalCents,
   changeCartQuantity,
   parseDiscountInput,
   removeCartItem,
 } from '../../utils/cart.js'
+import { formatMoneyValue } from '../../utils/currency.js'
 import { createIdempotencyKey } from '../../utils/idempotency.js'
 import { fromCents } from '../../utils/money.js'
 
@@ -90,6 +92,10 @@ export default function POS() {
     setServerError('')
   }
 
+  const scrollToCart = () => {
+    document.getElementById('pos-cart')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const handleCheckout = async () => {
     if (cart.length === 0 || discountError || createSale.isPending) return
 
@@ -117,33 +123,54 @@ export default function POS() {
   }
 
   return (
-    <div>
+    <div className={cart.length > 0 ? 'pb-24 xl:pb-0' : undefined}>
       <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
         <ProductSearchPanel cart={cart} onAdd={handleAdd} />
-        <CartPanel
-          headerAction={
-            <Button variant="secondary" size="sm" onClick={() => navigate('/sales')}>
-              <ReceiptText className="h-4 w-4" aria-hidden="true" />
-              {messages.nav.sales}
-            </Button>
-          }
-          cart={cart}
-          subtotalCents={subtotalCents}
-          discount={discount}
-          discountError={discountError}
-          effectiveDiscountCents={effectiveDiscountCents}
-          totalCents={totalCents}
-          paymentMethod={paymentMethod}
-          onPaymentChange={handlePaymentChange}
-          onDiscountChange={handleDiscountChange}
-          onQuantityChange={handleQuantityChange}
-          onRemove={handleRemove}
-          onClear={handleClear}
-          onCheckout={handleCheckout}
-          isSubmitting={createSale.isPending}
-          serverError={serverError}
-        />
+        <div id="pos-cart" className="scroll-mt-20">
+          <CartPanel
+            headerAction={
+              <Button variant="secondary" size="sm" onClick={() => navigate('/sales')}>
+                <ReceiptText className="h-4 w-4" aria-hidden="true" />
+                {messages.nav.sales}
+              </Button>
+            }
+            cart={cart}
+            subtotalCents={subtotalCents}
+            discount={discount}
+            discountError={discountError}
+            effectiveDiscountCents={effectiveDiscountCents}
+            totalCents={totalCents}
+            paymentMethod={paymentMethod}
+            onPaymentChange={handlePaymentChange}
+            onDiscountChange={handleDiscountChange}
+            onQuantityChange={handleQuantityChange}
+            onRemove={handleRemove}
+            onClear={handleClear}
+            onCheckout={handleCheckout}
+            isSubmitting={createSale.isPending}
+            serverError={serverError}
+          />
+        </div>
       </div>
+
+      {cart.length > 0 ? (
+        <div className="fixed inset-x-4 bottom-4 z-30 xl:hidden">
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface p-3 shadow-lg">
+            <div className="min-w-0">
+              <p className="text-xs text-text-muted">
+                <span className="numeric">{cartItemCount(cart)}</span> {messages.pos.itemCount}
+              </p>
+              <p className="numeric text-base font-semibold text-text">
+                {formatMoneyValue(fromCents(totalCents))}
+              </p>
+            </div>
+            <Button size="sm" onClick={scrollToCart}>
+              <ShoppingCart className="h-4 w-4" aria-hidden="true" />
+              {messages.pos.viewCart}
+            </Button>
+          </div>
+        </div>
+      ) : null}
 
       <SaleSuccessDialog sale={successSale} onClose={() => setSuccessSale(null)} />
     </div>

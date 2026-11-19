@@ -24,7 +24,14 @@ const NAV_ITEMS = [
   { to: '/users', label: messages.nav.users, icon: Users, roles: ['ADMIN'] },
 ]
 
-function SidebarContent({ role, onNavigate, showClose = false, onClose, showBrand = false }) {
+function SidebarContent({
+  role,
+  onNavigate,
+  showClose = false,
+  onClose,
+  showBrand = false,
+  showLabels = false,
+}) {
   const items = NAV_ITEMS.filter((item) => item.roles.includes(role))
 
   return (
@@ -61,7 +68,8 @@ function SidebarContent({ role, onNavigate, showClose = false, onClose, showBran
               title={item.label}
               className={({ isActive }) =>
                 cn(
-                  'flex h-11 items-center justify-center gap-3 rounded-md px-3 text-sm font-medium transition-colors lg:justify-start',
+                  'flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors',
+                  showLabels ? 'justify-start' : 'justify-center lg:justify-start',
                   isActive
                     ? 'bg-primary-soft text-primary-strong'
                     : 'text-text-muted hover:bg-background hover:text-text',
@@ -69,7 +77,7 @@ function SidebarContent({ role, onNavigate, showClose = false, onClose, showBran
               }
             >
               <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
-              <span className="hidden lg:inline">{item.label}</span>
+              <span className={showLabels ? 'inline' : 'hidden lg:inline'}>{item.label}</span>
             </NavLink>
           )
         })}
@@ -106,6 +114,7 @@ export default function Sidebar({ role = 'ADMIN', open = false, onClose }) {
               showClose
               onClose={onClose}
               showBrand
+              showLabels
             />
           </aside>
         </div>

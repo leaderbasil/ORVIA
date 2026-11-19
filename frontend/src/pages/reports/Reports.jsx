@@ -155,6 +155,41 @@ export default function Reports() {
     },
   ]
 
+  const lowStockMobileRow = (row) => (
+    <div className="space-y-3">
+      <div className="min-w-0">
+        <p className="font-medium text-text">{row.name}</p>
+        <p className="numeric text-xs text-text-muted">{row.sku}</p>
+        <p className="mt-1 text-xs text-text-muted">
+          {row.category || messages.common.notAvailable}
+        </p>
+      </div>
+
+      <dl className="grid grid-cols-3 gap-2 text-sm">
+        <div>
+          <dt className="text-xs text-text-muted">{messages.reports.columns.stock}</dt>
+          <dd
+            className={
+              row.stock_quantity === 0
+                ? 'numeric font-semibold text-danger-strong'
+                : 'numeric font-medium text-text'
+            }
+          >
+            {row.stock_quantity}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-text-muted">{messages.reports.columns.minimum}</dt>
+          <dd className="numeric">{row.minimum_stock}</dd>
+        </div>
+        <div>
+          <dt className="text-xs text-text-muted">{messages.reports.columns.value}</dt>
+          <dd className="numeric">{formatMoneyValue(row.value_at_cost)}</dd>
+        </div>
+      </dl>
+    </div>
+  )
+
   const resetRange = () => {
     const range = lastThirtyDays()
     setDateFrom(range.from)
@@ -377,6 +412,7 @@ export default function Reports() {
               <DataTable
                 columns={lowStockColumns}
                 rows={inventory.low_stock_items}
+                mobileRow={lowStockMobileRow}
                 rowKey={(row) => row.product_id}
                 emptyTitle={messages.reports.noLowStock}
                 emptyDescription={messages.reports.noLowStockDescription}

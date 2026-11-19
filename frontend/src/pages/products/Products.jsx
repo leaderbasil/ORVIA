@@ -82,92 +82,134 @@ export default function Products() {
   const productsQuery = useProducts(params)
   const disableProduct = useDisableProduct()
 
-  const columns = useMemo(() => {
-    const list = [
-      {
-        key: 'name',
-        header: messages.products.columns.name,
-        render: (product) => (
-          <div className="min-w-44">
-            <p className="font-medium text-text">{product.name}</p>
-            <p className="numeric text-xs text-text-muted">{product.sku}</p>
-          </div>
-        ),
-      },
-      {
-        key: 'category',
-        header: messages.products.columns.category,
-        render: (product) => product.category || messages.common.notAvailable,
-      },
-      ...(isAdmin
-        ? [
-            {
-              key: 'cost_price',
-              header: messages.products.columns.costPrice,
-              align: 'end',
-              className: 'numeric',
-              render: (product) => formatMoneyValue(product.cost_price),
-            },
-          ]
-        : []),
-      {
-        key: 'selling_price',
-        header: messages.products.columns.sellingPrice,
-        align: 'end',
-        className: 'numeric font-medium',
-        render: (product) => formatMoneyValue(product.selling_price),
-      },
-      {
-        key: 'stock_quantity',
-        header: messages.products.columns.stock,
-        render: (product) => <StockCell product={product} />,
-      },
-      {
-        key: 'is_active',
-        header: messages.products.columns.status,
-        render: (product) => (
-          <Badge tone={product.is_active ? 'success' : 'neutral'}>
-            {product.is_active ? messages.products.active : messages.products.inactive}
-          </Badge>
-        ),
-      },
-      ...(isAdmin
-        ? [
-            {
-              key: 'actions',
-              header: messages.products.columns.actions,
-              align: 'end',
-              render: (product) => (
-                <div className="flex items-center justify-end gap-1">
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/products/${product.id}/edit`)}
-                    aria-label={`${messages.products.edit}: ${product.name}`}
-                    title={messages.products.edit}
-                    className="flex h-8 w-8 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-primary-soft hover:text-primary-strong"
-                  >
-                    <Pencil className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                  {product.is_active ? (
-                    <button
-                      type="button"
-                      onClick={() => setProductToDisable(product)}
-                      aria-label={`${messages.products.disable}: ${product.name}`}
-                      title={messages.products.disable}
-                      className="flex h-8 w-8 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-danger-soft hover:text-danger-strong"
-                    >
-                      <Ban className="h-4 w-4" aria-hidden="true" />
-                    </button>
-                  ) : null}
-                </div>
-              ),
-            },
-          ]
-        : []),
-    ]
+  const renderActions = (product) => (
+    <div className="flex items-center justify-end gap-1">
+      <button
+        type="button"
+        onClick={() => navigate(`/products/${product.id}/edit`)}
+        aria-label={`${messages.products.edit}: ${product.name}`}
+        title={messages.products.edit}
+        className="flex h-8 w-8 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-primary-soft hover:text-primary-strong"
+      >
+        <Pencil className="h-4 w-4" aria-hidden="true" />
+      </button>
+      {product.is_active ? (
+        <button
+          type="button"
+          onClick={() => setProductToDisable(product)}
+          aria-label={`${messages.products.disable}: ${product.name}`}
+          title={messages.products.disable}
+          className="flex h-8 w-8 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-danger-soft hover:text-danger-strong"
+        >
+          <Ban className="h-4 w-4" aria-hidden="true" />
+        </button>
+      ) : null}
+    </div>
+  )
 
-    return list
-  }, [isAdmin, navigate])
+  const columns = [
+    {
+      key: 'name',
+      header: messages.products.columns.name,
+      render: (product) => (
+        <div className="min-w-44">
+          <p className="font-medium text-text">{product.name}</p>
+          <p className="numeric text-xs text-text-muted">{product.sku}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'category',
+      header: messages.products.columns.category,
+      render: (product) => product.category || messages.common.notAvailable,
+    },
+    ...(isAdmin
+      ? [
+          {
+            key: 'cost_price',
+            header: messages.products.columns.costPrice,
+            align: 'end',
+            className: 'numeric',
+            render: (product) => formatMoneyValue(product.cost_price),
+          },
+        ]
+      : []),
+    {
+      key: 'selling_price',
+      header: messages.products.columns.sellingPrice,
+      align: 'end',
+      className: 'numeric font-medium',
+      render: (product) => formatMoneyValue(product.selling_price),
+    },
+    {
+      key: 'stock_quantity',
+      header: messages.products.columns.stock,
+      render: (product) => <StockCell product={product} />,
+    },
+    {
+      key: 'is_active',
+      header: messages.products.columns.status,
+      render: (product) => (
+        <Badge tone={product.is_active ? 'success' : 'neutral'}>
+          {product.is_active ? messages.products.active : messages.products.inactive}
+        </Badge>
+      ),
+    },
+    ...(isAdmin
+      ? [
+          {
+            key: 'actions',
+            header: messages.products.columns.actions,
+            align: 'end',
+            render: renderActions,
+          },
+        ]
+      : []),
+  ]
+
+  const mobileRow = (product) => (
+    <div className="space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-medium text-text">{product.name}</p>
+          <p className="numeric text-xs text-text-muted">{product.sku}</p>
+          <p className="mt-1 text-xs text-text-muted">
+            {product.category || messages.common.notAvailable}
+          </p>
+        </div>
+        <Badge tone={product.is_active ? 'success' : 'neutral'}>
+          {product.is_active ? messages.products.active : messages.products.inactive}
+        </Badge>
+      </div>
+
+      <dl className="grid grid-cols-2 gap-2 text-sm">
+        <div>
+          <dt className="text-xs text-text-muted">{messages.products.columns.sellingPrice}</dt>
+          <dd className="numeric font-semibold text-text">
+            {formatMoneyValue(product.selling_price)}
+          </dd>
+        </div>
+        {isAdmin ? (
+          <div>
+            <dt className="text-xs text-text-muted">{messages.products.columns.costPrice}</dt>
+            <dd className="numeric text-text">{formatMoneyValue(product.cost_price)}</dd>
+          </div>
+        ) : null}
+        <div>
+          <dt className="text-xs text-text-muted">{messages.products.columns.stock}</dt>
+          <dd>
+            <StockCell product={product} />
+          </dd>
+        </div>
+      </dl>
+
+      {isAdmin ? (
+        <div className="flex justify-end border-t border-border pt-2">
+          {renderActions(product)}
+        </div>
+      ) : null}
+    </div>
+  )
 
   const handleConfirmDisable = async () => {
     if (!productToDisable) return
@@ -243,6 +285,7 @@ export default function Products() {
           <DataTable
             columns={columns}
             rows={pageData?.items ?? []}
+            mobileRow={mobileRow}
             isLoading={productsQuery.isLoading}
             emptyTitle={
               hasActiveFilters ? messages.products.emptyFilteredTitle : messages.products.emptyTitle

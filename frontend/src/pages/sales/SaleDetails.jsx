@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowRight, Printer, XCircle } from 'lucide-react'
+import { ArrowRight, Printer, ShoppingCart, XCircle } from 'lucide-react'
 import { toast } from 'sonner'
 
 import Alert from '../../components/common/Alert.jsx'
@@ -103,6 +103,10 @@ export default function SaleDetails() {
         className="no-print"
         actions={
           <>
+            <Button variant="secondary" onClick={() => navigate('/pos')}>
+              <ShoppingCart className="h-4 w-4" aria-hidden="true" />
+              {messages.sales.backToPos}
+            </Button>
             <Button variant="secondary" onClick={() => navigate('/sales')}>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
               {messages.sales.back}
@@ -152,7 +156,7 @@ export default function SaleDetails() {
           <div>
             <dt className="text-xs text-text-muted">{messages.sales.issuedAt}</dt>
             <dd className="numeric font-medium text-text">
-              {formatDateTime(sale.created_at)}
+              <bdi>{formatDateTime(sale.created_at)}</bdi>
             </dd>
           </div>
         </dl>
@@ -172,7 +176,7 @@ export default function SaleDetails() {
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-2 text-start font-medium text-text-muted"
+                  className="hidden px-3 py-2 text-start font-medium text-text-muted sm:table-cell"
                 >
                   {messages.sales.sku}
                 </th>
@@ -184,7 +188,7 @@ export default function SaleDetails() {
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-2 text-end font-medium text-text-muted"
+                  className="hidden px-3 py-2 text-end font-medium text-text-muted sm:table-cell"
                 >
                   {messages.sales.unitPrice}
                 </th>
@@ -200,9 +204,11 @@ export default function SaleDetails() {
               {sale.items.map((item) => (
                 <tr key={item.product_id} className="border-b border-border last:border-0">
                   <td className="px-3 py-2 font-medium text-text">{item.product_name}</td>
-                  <td className="numeric px-3 py-2 text-text-muted">{item.sku}</td>
+                  <td className="numeric hidden px-3 py-2 text-text-muted sm:table-cell">
+                    {item.sku}
+                  </td>
                   <td className="numeric px-3 py-2 text-end">{item.quantity}</td>
-                  <td className="numeric px-3 py-2 text-end">
+                  <td className="numeric hidden px-3 py-2 text-end sm:table-cell">
                     {formatMoneyValue(item.unit_price)}
                   </td>
                   <td className="numeric px-3 py-2 text-end font-medium">

@@ -99,7 +99,11 @@ export default function SalesHistory() {
     {
       key: 'created_at',
       header: messages.sales.columns.date,
-      render: (sale) => <span className="numeric">{formatDateTime(sale.created_at)}</span>,
+      render: (sale) => (
+        <span className="numeric">
+          <bdi>{formatDateTime(sale.created_at)}</bdi>
+        </span>
+      ),
     },
     {
       key: 'cashier',
@@ -145,6 +149,59 @@ export default function SalesHistory() {
       ),
     },
   ]
+
+  const mobileRow = (sale) => (
+    <div className="space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <button
+            type="button"
+            dir="ltr"
+            onClick={() => navigate(`/sales/${sale.id}`)}
+            className="numeric text-start font-medium text-primary-strong hover:underline"
+          >
+            {sale.invoice_number}
+          </button>
+          <p className="text-xs text-text-muted">
+            <span className="numeric">{sale.item_count}</span> {messages.sales.itemsCount}
+          </p>
+        </div>
+        <Badge tone={sale.status === 'CANCELLED' ? 'danger' : 'success'}>
+          {messages.sales.status[sale.status] ?? sale.status}
+        </Badge>
+      </div>
+
+      <dl className="grid grid-cols-2 gap-2 text-sm">
+        <div>
+          <dt className="text-xs text-text-muted">{messages.sales.columns.date}</dt>
+          <dd className="numeric">
+            <bdi>{formatDateTime(sale.created_at)}</bdi>
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-text-muted">{messages.sales.columns.cashier}</dt>
+          <dd>{sale.cashier?.full_name || messages.common.notAvailable}</dd>
+        </div>
+        <div>
+          <dt className="text-xs text-text-muted">{messages.sales.columns.payment}</dt>
+          <dd>{messages.sales.payment[sale.payment_method] ?? sale.payment_method}</dd>
+        </div>
+        <div>
+          <dt className="text-xs text-text-muted">{messages.sales.columns.total}</dt>
+          <dd className="numeric font-semibold text-text">
+            {formatMoneyValue(sale.total_amount)}
+          </dd>
+        </div>
+      </dl>
+
+      <div className="flex justify-end border-t border-border pt-2">
+        <Button variant="secondary" size="sm" onClick={() => navigate(`/sales/${sale.id}`)}>
+          <Eye className="h-4 w-4" aria-hidden="true" />
+          {messages.sales.view}
+        </Button>
+      </div>
+    </div>
+  )
 
   return (
     <div>
@@ -221,6 +278,7 @@ export default function SalesHistory() {
           <DataTable
             columns={columns}
             rows={pageData?.items ?? []}
+            mobileRow={mobileRow}
             isLoading={salesQuery.isLoading}
             emptyTitle={
               hasActiveFilters

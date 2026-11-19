@@ -157,7 +157,7 @@ export default function Users() {
       {
         key: 'created_at',
         header: messages.users.columns.createdAt,
-        render: (row) => formatDate(row.created_at),
+        render: (row) => <bdi>{formatDate(row.created_at)}</bdi>,
       },
       {
         key: 'actions',
@@ -198,6 +198,59 @@ export default function Users() {
         },
       },
   ]
+
+  const mobileRow = (row) => {
+    const isSelf = row.id === currentUser?.id
+
+    return (
+      <div className="space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-medium text-text">{row.full_name}</p>
+              {isSelf ? <Badge tone="primary">{messages.users.you}</Badge> : null}
+            </div>
+            <p dir="ltr" className="text-xs text-text-muted">
+              {row.email}
+            </p>
+          </div>
+          <Badge tone={row.is_active ? 'success' : 'neutral'}>
+            {row.is_active ? messages.users.active : messages.users.inactive}
+          </Badge>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+          <Badge tone={row.role === 'ADMIN' ? 'primary' : 'neutral'}>
+            {messages.roles[row.role] ?? row.role}
+          </Badge>
+          <span className="text-xs text-text-muted">
+            {messages.users.columns.createdAt}: <bdi>{formatDate(row.created_at)}</bdi>
+          </span>
+        </div>
+
+        <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-2">
+          <Button variant="secondary" size="sm" onClick={() => openEdit(row)}>
+            <Pencil className="h-4 w-4" aria-hidden="true" />
+            {messages.users.edit}
+          </Button>
+          {!isSelf ? (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setStatusTarget({ user: row, isActive: !row.is_active })}
+            >
+              {row.is_active ? (
+                <UserX className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <UserCheck className="h-4 w-4" aria-hidden="true" />
+              )}
+              {row.is_active ? messages.users.disable : messages.users.enable}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+    )
+  }
 
   const pageData = usersQuery.data
   const isEditingSelf =
@@ -254,6 +307,7 @@ export default function Users() {
           <DataTable
             columns={columns}
             rows={pageData?.items ?? []}
+            mobileRow={mobileRow}
             isLoading={usersQuery.isLoading}
             emptyTitle={messages.users.emptyTitle}
             emptyDescription={messages.users.emptyDescription}
