@@ -7,11 +7,13 @@ import { cn } from '../../utils/cn'
 export function OrviaMark({ className, alt = '' }) {
   return (
     <>
-      {/* Light theme icon - Glossy Purple version */}
+      {/* Light theme icon - Glossy Purple version (eager load for fast first paint) */}
       <img
         src="/Glossy%20Purple%20ORVIA%20Shopping%20App%20Icon.png"
         alt={alt}
         draggable={false}
+        loading="eager"
+        decoding="async"
         className={cn('shrink-0 object-contain dark:hidden', className)}
       />
       {/* Dark theme icon - Neon Purple version */}
@@ -19,6 +21,8 @@ export function OrviaMark({ className, alt = '' }) {
         src="/Neon%20Purple%20ORVIA%20Shopping%20Icon.png"
         alt={alt}
         draggable={false}
+        loading="eager"
+        decoding="async"
         className={cn('shrink-0 object-contain hidden dark:block', className)}
       />
     </>

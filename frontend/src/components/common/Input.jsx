@@ -26,7 +26,11 @@ const Input = forwardRef(function Input(
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={error ? errorId : hint ? hintId : undefined}
         className={cn(
-          'h-10 w-full rounded-md border bg-surface px-3 text-base text-text transition-colors placeholder:text-text-muted/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:bg-background',
+          'h-10 w-full rounded-md border px-3 text-base text-text transition-colors placeholder:text-text-muted/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed',
+          // خلفية الحقل تختلف عن البطاقة (bg-gray-50/dark:bg-gray-800) وعن الخلفية الرئيسية (bg-background)
+          'bg-white dark:bg-gray-900',
+          // حدود أوسع وأكثر وضوحاً لتفصل الحقل عن المحيط
+          'border-gray-300 dark:border-gray-600 border-2',
           error ? 'border-danger' : 'border-border',
           className,
         )}

@@ -23,9 +23,13 @@ function QuantityControl({ item, onChange, onRemove }) {
           disabled={item.quantity <= 1}
           aria-label={messages.pos.decrease}
           title={messages.pos.decrease}
-          className="flex h-8 w-8 items-center justify-center text-text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
+          className={cn(
+            'flex items-center justify-center text-text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-40',
+            // حجم أكبر للمس باللمس على الموبايل
+            'h-10 w-10 md:h-8 md:w-8',
+          )}
         >
-          <Minus className="h-3.5 w-3.5" aria-hidden="true" />
+          <Minus className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
         </button>
         <input
           type="number"
@@ -38,7 +42,10 @@ function QuantityControl({ item, onChange, onRemove }) {
             onChange(item.id, event.target.value)
           }}
           aria-label={`${messages.pos.quantity}: ${item.name}`}
-          className="numeric h-8 w-11 border-x border-border bg-surface text-center text-sm text-text focus-visible:outline-none"
+          className={cn(
+            'numeric border-x border-border bg-surface text-center text-sm text-text focus-visible:outline-none',
+            'h-10 md:h-8 w-12 md:w-11',
+          )}
         />
         <button
           type="button"
@@ -46,9 +53,13 @@ function QuantityControl({ item, onChange, onRemove }) {
           disabled={item.quantity >= item.stock_quantity}
           aria-label={messages.pos.increase}
           title={messages.pos.increase}
-          className="flex h-8 w-8 items-center justify-center text-text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
+          className={cn(
+            'flex items-center justify-center text-text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-40',
+            // حجم أكبر للمس باللمس على الموبايل
+            'h-10 w-10 md:h-8 md:w-8',
+          )}
         >
-          <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+          <Plus className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
         </button>
       </div>
       <button
@@ -56,9 +67,13 @@ function QuantityControl({ item, onChange, onRemove }) {
         onClick={() => onRemove(item.id)}
         aria-label={`${messages.pos.remove}: ${item.name}`}
         title={messages.pos.remove}
-        className="flex h-8 w-8 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-danger-soft hover:text-danger-strong"
+        className={cn(
+          'flex items-center justify-center rounded-md text-text-muted transition-colors hover:bg-danger-soft hover:text-danger-strong',
+          // حجم أكبر للمس باللمس على الموبايل
+          'h-10 w-10 md:h-8 md:w-8',
+        )}
       >
-        <Trash2 className="h-4 w-4" aria-hidden="true" />
+        <Trash2 className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
       </button>
     </div>
   )
@@ -86,7 +101,7 @@ export default function CartPanel({
   const canCheckout = cart.length > 0 && !discountError && !isSubmitting
 
   return (
-    <Card className="flex flex-col overflow-hidden xl:sticky xl:top-20 xl:max-h-[calc(100vh-12rem)]">
+    <Card className="flex flex-col overflow-hidden xl:sticky xl:top-20 xl:bottom-0 xl:max-h-[calc(100vh-6rem)]">
       <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border p-4">
         <div className="flex items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary-soft text-primary-strong">

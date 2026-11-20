@@ -120,7 +120,7 @@ export default function Login() {
           <Input
             label={messages.login.email}
             type="email"
-            placeholder="admin@example.com"
+            placeholder=""
             autoComplete="username"
             required
             error={errors.email?.message}
@@ -129,7 +129,7 @@ export default function Login() {
           <Input
             label={messages.login.password}
             type="password"
-            placeholder="••••••••"
+            placeholder=""
             autoComplete="current-password"
             required
             error={errors.password?.message}

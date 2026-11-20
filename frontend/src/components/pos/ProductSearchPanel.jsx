@@ -1,18 +1,17 @@
 import { useMemo, useState } from 'react'
-import { PackageOpen, Plus, Search } from 'lucide-react'
+import { PackageOpen, Search } from 'lucide-react'
 
 import Alert from '../../components/common/Alert.jsx'
 import Badge from '../../components/common/Badge.jsx'
-import Button from '../../components/common/Button.jsx'
 import Card from '../../components/common/Card.jsx'
 import EmptyState from '../../components/common/EmptyState.jsx'
 import Input from '../../components/common/Input.jsx'
+import ProductCard from './ProductCard.jsx'
 import { messages } from '../../constants/messages.js'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue.js'
 import { useProductSearch, useProducts } from '../../hooks/useProducts.js'
 import { getApiErrorMessage } from '../../services/api.js'
 import { cn } from '../../utils/cn.js'
-import { formatMoneyValue } from '../../utils/currency.js'
 
 const UNCATEGORIZED = '__uncategorized__'
 
@@ -32,34 +31,16 @@ function ResultSkeleton() {
   )
 }
 
-function StockBadge({ product }) {
-  if (product.stock_quantity === 0) {
-    return <Badge tone="danger">{messages.pos.outOfStock}</Badge>
-  }
-  if (product.stock_quantity <= product.minimum_stock) {
-    return (
-      <Badge tone="warning">
-        {messages.pos.available} <span className="numeric">{product.stock_quantity}</span>
-      </Badge>
-    )
-  }
-  return (
-    <Badge tone="success">
-      {messages.pos.available} <span className="numeric">{product.stock_quantity}</span>
-    </Badge>
-  )
-}
-
 function CategoryTab({ active, children, ...props }) {
   return (
     <button
       type="button"
       aria-pressed={active}
       className={cn(
-        'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition-colors',
+        'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors',
         active
-          ? 'border-primary bg-primary-soft text-primary-strong'
-          : 'border-border bg-surface text-text-muted hover:bg-background hover:text-text',
+          ? 'border-primary bg-primary-soft text-primary-strong whitespace-nowrap'
+          : 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-gray-900 dark:hover:text-white',
       )}
       {...props}
     >
@@ -259,52 +240,12 @@ export default function ProductSearchPanel({ cart, onAdd }) {
 
               return (
                 <li key={product.id} className="h-full">
-                  <button
-                    type="button"
-                    onClick={() => onAdd(product)}
+                  <ProductCard
+                    product={product}
+                    inCart={inCart}
+                    onAdd={onAdd}
                     disabled={disabled}
-                    aria-label={`${messages.pos.addToCart}: ${product.name}`}
-                    className={cn(
-                      'flex h-full w-full flex-col justify-between gap-3 rounded-lg border border-border bg-surface p-3 text-start shadow-sm transition-colors',
-                      disabled
-                        ? 'cursor-not-allowed opacity-70'
-                        : 'hover:border-primary hover:bg-primary-soft/40 focus-visible:border-primary focus-visible:bg-primary-soft/40',
-                    )}
-                  >
-                    <div className="space-y-2">
-                      <div className="space-y-1">
-                        <p className="line-clamp-2 min-h-[2.75rem] font-medium text-text">
-                          {product.name}
-                        </p>
-                        <p className="numeric text-xs text-text-muted">{product.sku}</p>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {product.category ? (
-                          <Badge tone="neutral">{product.category}</Badge>
-                        ) : null}
-                        <StockBadge product={product} />
-                        {inCart > 0 ? (
-                          <Badge tone="primary">
-                            <span className="numeric">{inCart}</span> {messages.pos.inCart}
-                          </Badge>
-                        ) : null}
-                        {atStockLimit && product.stock_quantity > 0 ? (
-                          <Badge tone="neutral">{messages.pos.maxReached}</Badge>
-                        ) : null}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-2 border-t border-border pt-2">
-                      <span className="numeric text-base font-semibold text-text">
-                        {formatMoneyValue(product.selling_price)}
-                      </span>
-                      {!disabled ? (
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-primary-strong">
-                          <Plus className="h-4 w-4" aria-hidden="true" />
-                        </span>
-                      ) : null}
-                    </div>
-                  </button>
+                  />
                 </li>
               )
             })}
