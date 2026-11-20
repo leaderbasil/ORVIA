@@ -1,16 +1,37 @@
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        background: '#F8FAFC',
-        surface: '#FFFFFF',
-        border: '#E2E8F0',
-        text: { DEFAULT: '#1E293B', muted: '#64748B' },
-        primary: { DEFAULT: '#6366F1', strong: '#4F46E5', hover: '#4338CA', soft: '#EEF2FF' },
-        success: { DEFAULT: '#16A34A', strong: '#15803D', soft: '#F0FDF4' },
-        warning: { DEFAULT: '#D97706', strong: '#B45309', soft: '#FFFBEB' },
-        danger: { DEFAULT: '#DC2626', strong: '#B91C1C', soft: '#FEF2F2' },
+        background: 'rgb(var(--color-background))',
+        surface: 'rgb(var(--color-surface))',
+        border: 'rgb(var(--color-border))',
+        text: {
+          DEFAULT: 'rgb(var(--color-text))',
+          muted: 'rgb(var(--color-text-muted))',
+        },
+        primary: {
+          DEFAULT: 'rgb(var(--color-primary))',
+          strong: 'rgb(var(--color-primary-strong))',
+          hover: 'rgb(var(--color-primary-hover))',
+          soft: 'rgb(var(--color-primary-soft))',
+        },
+        success: {
+          DEFAULT: 'rgb(var(--color-success))',
+          strong: 'rgb(var(--color-success-strong))',
+          soft: 'rgb(var(--color-success-soft))',
+        },
+        warning: {
+          DEFAULT: 'rgb(var(--color-warning))',
+          strong: 'rgb(var(--color-warning-strong))',
+          soft: 'rgb(var(--color-warning-soft))',
+        },
+        danger: {
+          DEFAULT: 'rgb(var(--color-danger))',
+          strong: 'rgb(var(--color-danger-strong))',
+          soft: 'rgb(var(--color-danger-soft))',
+        },
       },
       fontFamily: {
         sans: ['IBM Plex Sans Arabic', 'Cairo', 'Tahoma', 'sans-serif'],

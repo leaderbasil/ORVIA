@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Bell, LogOut, Menu } from 'lucide-react'
+import { Bell, LogOut, Menu, Moon, Sun } from 'lucide-react'
 
+import { useTheme } from '../../context/ThemeContext.jsx'
 import { messages } from '../../constants/messages'
 import { cn } from '../../utils/cn'
 import { pageMetaForPath } from '../../utils/navigation'
@@ -16,6 +17,7 @@ function getInitials(fullName = '') {
 
 export default function Header({ user = null, role = 'ADMIN', onLogout, onOpenSidebar }) {
   const { pathname } = useLocation()
+  const { theme, toggleTheme } = useTheme()
   const page = pageMetaForPath(pathname)
 
   return (
@@ -46,6 +48,20 @@ export default function Header({ user = null, role = 'ADMIN', onLogout, onOpenSi
             <Bell className="h-5 w-5" aria-hidden="true" />
           </Link>
         ) : null}
+
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? messages.actions.switchToLight : messages.actions.switchToDark}
+          title={theme === 'dark' ? messages.actions.switchToLight : messages.actions.switchToDark}
+          className="flex h-10 w-10 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-background hover:text-text"
+        >
+          {theme === 'dark' ? (
+            <Sun className="h-5 w-5" aria-hidden="true" />
+          ) : (
+            <Moon className="h-5 w-5" aria-hidden="true" />
+          )}
+        </button>
 
         {user ? (
           <div className="flex items-center gap-2 rounded-md border border-border bg-surface p-1 ps-2">

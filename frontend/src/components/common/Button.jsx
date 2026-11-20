@@ -7,9 +7,9 @@ const VARIANTS = {
   primary:
     'bg-primary-strong text-white hover:bg-primary-hover disabled:hover:bg-primary-strong',
   secondary:
-    'border border-border bg-surface text-text hover:bg-background disabled:hover:bg-surface',
+    'border border-border bg-surface text-text hover:bg-background disabled:hover:bg-surface dark:border-border dark:bg-surface dark:text-text dark:hover:bg-background dark:hover:text-text',
   ghost:
-    'bg-transparent text-text-muted hover:bg-primary-soft hover:text-primary-strong',
+    'bg-transparent text-text-muted hover:bg-primary-soft hover:text-primary-strong dark:hover:bg-primary/20 dark:hover:text-primary-strong',
   danger: 'bg-danger text-white hover:bg-danger-strong disabled:hover:bg-danger',
 }
 

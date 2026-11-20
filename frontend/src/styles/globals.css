@@ -4,10 +4,48 @@
 
 @layer base {
   :root {
+    /* Light theme design tokens */
+    --color-background: 248, 250, 252;   /* #F8FAFC */
+    --color-surface: 255, 255, 255;      /* #FFFFFF */
+    --color-border: 226, 232, 240;       /* #E2E8F0 */
+    --color-text: 30, 41, 59;            /* #1E293B */
+    --color-text-muted: 100, 116, 139;   /* #64748B */
+
+    --color-primary: 99, 102, 241;       /* #6366F1 */
+    --color-primary-strong: 79, 70, 229; /* #4F46E5 */
+    --color-primary-hover: 67, 56, 202;  /* #4338CA */
+    --color-primary-soft: 238, 242, 255; /* #EEF2FF */
+
+    --color-success: 22, 163, 74;        /* #16A34A */
+    --color-success-strong: 21, 128, 61; /* #15803D */
+    --color-success-soft: 240, 253, 244; /* #F0FDF4 */
+
+    --color-warning: 217, 119, 6;        /* #D97706 */
+    --color-warning-strong: 180, 83, 9;  /* #B45309 */
+    --color-warning-soft: 255, 251, 235; /* #FFFBEB */
+
+    --color-danger: 220, 38, 38;         /* #DC2626 */
+    --color-danger-strong: 185, 28, 28;  /* #B91C1C */
+    --color-danger-soft: 254, 242, 242;  /* #FEF2F2 */
+
     /* Chart colors derive from tailwind.config.js tokens. */
     --chart-primary: theme('colors.primary.strong');
     --chart-grid: theme('colors.border');
     --chart-axis: theme('colors.text.muted');
+  }
+
+  [data-theme='dark'] {
+    /* Dark theme design tokens */
+    --color-background: 15, 23, 42;      /* #0F172A */
+    --color-surface: 30, 41, 59;         /* #1E293B */
+    --color-border: 51, 65, 85;          /* #334155 */
+    --color-text: 248, 250, 252;         /* #F8FAFC */
+    --color-text-muted: 148, 163, 184;   /* #94A3B8 */
+
+    --color-primary-soft: 30, 27, 75;    /* #1E1B4B */
+    --color-success-soft: 6, 78, 59;     /* #064E3B */
+    --color-warning-soft: 69, 26, 3;     /* #451A03 */
+    --color-danger-soft: 69, 10, 10;     /* #450A0A */
   }
 
   body {

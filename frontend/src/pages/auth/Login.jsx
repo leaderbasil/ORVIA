@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Sparkles } from 'lucide-react'
+import { Moon, Sparkles, Sun } from 'lucide-react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -16,6 +16,7 @@ import { messages } from '../../constants/messages.js'
 import { useAuth } from '../../hooks/useAuth.js'
 import { getApiErrorMessage } from '../../services/api.js'
 import { homePathForRole } from '../../utils/navigation.js'
+import { useTheme } from '../../context/ThemeContext.jsx'
 
 const loginSchema = z.object({
   email: z
@@ -29,6 +30,7 @@ const loginSchema = z.object({
 export default function Login() {
   const { login, isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
+  const { theme, toggleTheme } = useTheme()
   const [serverError, setServerError] = useState('')
   const [isDemoLoading, setIsDemoLoading] = useState(false)
 
@@ -85,11 +87,26 @@ export default function Login() {
       </div>
 
       <Card className="orvia-rise relative w-full max-w-md p-6 shadow-md sm:p-8">
-        <div className="mb-6 flex flex-col items-center gap-4 text-center">
-          <OrviaLogo />
-          <div className="space-y-1">
-            <h1 className="text-2xl font-semibold">{messages.pages.login.title}</h1>
-            <p className="text-sm text-text-muted">{messages.pages.login.description}</p>
+        <div className="relative mb-6">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? messages.actions.switchToLight : messages.actions.switchToDark}
+            title={theme === 'dark' ? messages.actions.switchToLight : messages.actions.switchToDark}
+            className="absolute top-0 right-0 h-10 w-10 items-center justify-center rounded-md text-text-muted hover:bg-background hover:text-text transition-colors"
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-5 w-5" aria-hidden="true" />
+            ) : (
+              <Moon className="h-5 w-5" aria-hidden="true" />
+            )}
+          </button>
+          <div className="mb-6 flex flex-col items-center gap-4 text-center">
+            <OrviaLogo />
+            <div className="space-y-1">
+              <h1 className="text-2xl font-semibold">{messages.pages.login.title}</h1>
+              <p className="text-sm text-text-muted">{messages.pages.login.description}</p>
+            </div>
           </div>
         </div>
 

@@ -49,6 +49,8 @@ export const messages = {
     close: 'إغلاق',
     openMenu: 'فتح القائمة',
     lowStockAlert: 'تنبيه المخزون المنخفض',
+    switchToDark: 'الوضع الليلي',
+    switchToLight: 'الوضع النهاري',
   },
   common: {
     loading: 'جارٍ التحميل…',

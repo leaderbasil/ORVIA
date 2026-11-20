@@ -6,19 +6,29 @@ import { cn } from '../../utils/cn'
  */
 export function OrviaMark({ className, alt = '' }) {
   return (
-    <img
-      src="/orvia-mark.webp"
-      alt={alt}
-      draggable={false}
-      className={cn('shrink-0 object-contain', className)}
-    />
+    <>
+      {/* Light theme icon - Glossy Purple version */}
+      <img
+        src="/Glossy%20Purple%20ORVIA%20Shopping%20App%20Icon.png"
+        alt={alt}
+        draggable={false}
+        className={cn('shrink-0 object-contain dark:hidden', className)}
+      />
+      {/* Dark theme icon - Neon Purple version */}
+      <img
+        src="/Neon%20Purple%20ORVIA%20Shopping%20Icon.png"
+        alt={alt}
+        draggable={false}
+        className={cn('shrink-0 object-contain hidden dark:block', className)}
+      />
+    </>
   )
 }
 
 export function OrviaWordmark({ className, alt = 'ORVIA' }) {
   return (
     <img
-      src="/orvia-wordmark.webp"
+      src="/Glossy%20Purple%20ORVIA%20Shopping%20App%20Icon.png"
       alt={alt}
       draggable={false}
       className={cn('w-auto object-contain', className)}
@@ -29,17 +39,15 @@ export function OrviaWordmark({ className, alt = 'ORVIA' }) {
 export function OrviaLogo({
   className,
   markClassName = 'h-32 w-32',
-  wordmarkClassName = 'h-8',
 }) {
   return (
-    <span className={cn('flex flex-col items-center gap-3', className)}>
+    <span className={cn('flex items-center justify-center', className)}>
       <OrviaMark
         className={cn(
           'rounded-[28px] shadow-sm ring-1 ring-primary/10',
           markClassName,
         )}
       />
-      <OrviaWordmark className={wordmarkClassName} />
     </span>
   )
 }
