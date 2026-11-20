@@ -34,8 +34,8 @@ class Settings(BaseSettings):
     CURRENCY_CODE: str = Field(default="USD", min_length=3, max_length=3)
     REPORT_TIMEZONE: str = "UTC"
 
-    FIRST_ADMIN_EMAIL: str = "admin@example.com"
-    FIRST_ADMIN_PASSWORD: str = "change-me-now"
+    FIRST_ADMIN_EMAIL: str = "abc@orvia.com"
+    FIRST_ADMIN_PASSWORD: str = "ORVIA2026@#$"
     FIRST_ADMIN_FULL_NAME: str = "Store Admin"
 
     DEMO_CASHIER_EMAIL: str = "cashier@example.com"
